@@ -20,6 +20,4 @@ public class GenAIController {
     public ResponseEntity<String> askGenAi(@RequestBody Map<String,String> request){
         return genAIService.askGenAi(request.get("request"));
     }
-
-
 }

@@ -20,6 +20,5 @@ public class GenAIService {
         request.put("message",userQuery);
         ResponseEntity<String> response = restTemplate.postForEntity(url,request,String.class);
         return new ResponseEntity<>(response.getBody(),response.getStatusCode());
-
     }
 }
