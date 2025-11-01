@@ -1,6 +1,9 @@
 package com.akash.genai.entity;
-
+import java.time.LocalDateTime;
 import jakarta.persistence.*;
+
+import java.net.*;
+
 
 @Entity
 public class UserActivity {
@@ -9,6 +12,26 @@ public class UserActivity {
     private String id;
 
     private String request;
+
+    private LocalDateTime localDateTime;
+
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
+
+    private String host;
+
+    public String getHost(){
+        return host;
+    }
+
+    public void setHost(String host){
+        this.host=host;
+    }
 
     public String getId() {
         return id;

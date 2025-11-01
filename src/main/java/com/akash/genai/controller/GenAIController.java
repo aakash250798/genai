@@ -18,6 +18,6 @@ public class GenAIController {
 
     @PostMapping("/genai")
     public ResponseEntity<String> askGenAi(@RequestBody Map<String,String> request){
-        return genAIService.askGenAi(request.get("request"));
+        return genAIService.askGenAiModel2(request.get("request"));
     }
 }
