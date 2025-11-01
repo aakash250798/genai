@@ -6,6 +6,8 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +33,7 @@ public class GenAIService {
     public ResponseEntity<String> askGenAi(String userQuery) {
         String url = "https://apifreellm.com/api/chat";
         Map <String,String> request = new HashMap<>();
-        ResponseEntity<String> response = null;
+        ResponseEntity<String> response = new ResponseEntity<>("Timeout", HttpStatus.GATEWAY_TIMEOUT);
                 request.put("message",userQuery);
         try {
             response = restTemplate.postForEntity(url, request, String.class);
