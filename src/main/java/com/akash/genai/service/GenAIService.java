@@ -3,6 +3,8 @@ package com.akash.genai.service;
 import com.akash.genai.entity.UserActivity;
 import com.akash.genai.repository.GenAIRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,9 @@ import java.util.random.RandomGenerator;
 
 @Service
 public class GenAIService {
+    
+    
+    Logger logger = LoggerFactory.getLogger(GenAIService.class);
 
     @Autowired
     RestTemplate restTemplate;
@@ -26,14 +31,25 @@ public class GenAIService {
     public ResponseEntity<String> askGenAi(String userQuery) {
         String url = "https://apifreellm.com/api/chat";
         Map <String,String> request = new HashMap<>();
-        request.put("message",userQuery);
-        ResponseEntity<String> response = restTemplate.postForEntity(url,request,String.class);
+        ResponseEntity<String> response = null;
+                request.put("message",userQuery);
+        try {
+            response = restTemplate.postForEntity(url, request, String.class);
+        }
+        catch (Exception e){
+            logger.error(" -- Exception occured while calling the url",e);
+        }
         UserActivity userActivity = new UserActivity();
         userActivity.setId(UUID.randomUUID().toString());
         userActivity.setRequest(userQuery);
         userActivity.setStatus(response.getStatusCode().toString());
         userActivity.setResponse(response.getBody());
-        genAIRepository.save(userActivity);
+        try {
+            genAIRepository.save(userActivity);
+        }
+        catch (Exception e){
+            logger.error(" -- Exception occured while saving entity", e);
+        }
         return new ResponseEntity<>(response.getBody(),response.getStatusCode());
     }
 }
