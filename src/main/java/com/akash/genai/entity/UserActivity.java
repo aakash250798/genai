@@ -25,6 +25,16 @@ public class UserActivity {
 
     private String host;
 
+    public long getTimeConsumedInMillis() {
+        return timeConsumedInMillis;
+    }
+
+    public void setTimeConsumedInMillis(long timeConsumedInMillis) {
+        this.timeConsumedInMillis = timeConsumedInMillis;
+    }
+
+    private long timeConsumedInMillis;
+
     public String getHost(){
         return host;
     }

@@ -21,8 +21,4 @@ public class GenAIController {
         return genAIService.askGenAiModel2(request.get("request"));
     }
 
-    @PostMapping("/image")
-    public ResponseEntity<String> generateImage(@RequestBody Map<String, String> request){
-        return genAIService.generateImage(request.get("request"));
-    }
 }

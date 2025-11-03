@@ -2,12 +2,13 @@ package com.akash.genai.service;
 
 import com.akash.genai.entity.UserActivity;
 import com.akash.genai.repository.GenAIRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -75,73 +76,43 @@ public class GenAIService {
         String status = "OK";
         try {
             WebClient webClient = WebClient.create(url);
-
+            long start = System.currentTimeMillis();
             resp = webClient.get()
                     .uri(url, userQuery)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
-        } catch (Exception e) {
-            status = "GATEWAY_TIMEOUT";
-            logger.error(" -- Exception occured while calling the url", e);
-        }
-        UserActivity userActivity = new UserActivity();
-        userActivity.setId(UUID.randomUUID().toString());
-        userActivity.setLocalDateTime(LocalDateTime.now());
-        // need corrections for getting right IP address and not localhost
-        try {
-            userActivity.setHost(InetAddress.getLocalHost().toString());
-        } catch (UnknownHostException e) {
-            logger.error(" -- UnknownHost", e);
-        }
+
+            long end = System.currentTimeMillis();
+
+
+
+        UserActivity userActivity = getUserActivityEntity();
         userActivity.setRequest(userQuery);
         userActivity.setStatus(status);
         userActivity.setResponse(resp);
-        try {
-            genAIRepository.save(userActivity);
+        userActivity.setTimeConsumedInMillis(end-start);
+
+        genAIRepository.save(userActivity);
+
         } catch (Exception e) {
-            logger.error(" -- Exception occured while saving entity", e);
+            logger.error(" -- Exception occured ", e);
         }
         return new ResponseEntity<>(resp, HttpStatus.valueOf(status));
     }
 
-    @Transactional
-    public ResponseEntity<String> generateImage(String userQuery) {
-        String url = "https://www.craiyon.com/api/image/draw";
-        Map<String, String> request = new HashMap<>();
-
-        request.put("prompt", userQuery);
-        request.put("model","auto");
-        request.put("aspect_ratio","auto");
-        request.put("n_images","2");
-        request.put("negative_prompt","");
-
-
-        ResponseEntity<String> resp = new ResponseEntity<>("",HttpStatus.GATEWAY_TIMEOUT);
-        try {
-
-            resp = restTemplate.postForEntity(url,request,String.class);
-
-        } catch (Exception e) {
-            logger.error(" -- Exception occured while calling the url", e);
-        }
+    public UserActivity getUserActivityEntity(){
         UserActivity userActivity = new UserActivity();
         userActivity.setId(UUID.randomUUID().toString());
         userActivity.setLocalDateTime(LocalDateTime.now());
-        // need corrections for getting right IP address and not localhost
         try {
             userActivity.setHost(InetAddress.getLocalHost().toString());
         } catch (UnknownHostException e) {
             logger.error(" -- UnknownHost", e);
         }
-        userActivity.setRequest(userQuery);
-        userActivity.setStatus(resp.getStatusCode().toString());
-        userActivity.setResponse(resp.getBody());
-        try {
-            genAIRepository.save(userActivity);
-        } catch (Exception e) {
-            logger.error(" -- Exception occured while saving entity", e);
-        }
-        return resp;
+        return userActivity;
+
     }
+
+
 }
