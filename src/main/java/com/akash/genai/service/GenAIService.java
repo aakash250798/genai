@@ -2,9 +2,7 @@ package com.akash.genai.service;
 
 import com.akash.genai.entity.UserActivity;
 import com.akash.genai.repository.GenAIRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,8 +82,6 @@ public class GenAIService {
                     .block();
 
             long end = System.currentTimeMillis();
-
-
 
         UserActivity userActivity = getUserActivityEntity();
         userActivity.setRequest(userQuery);

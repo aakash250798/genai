@@ -2,8 +2,6 @@ package com.akash.genai.entity;
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
-import java.net.*;
-
 
 @Entity
 public class UserActivity {
